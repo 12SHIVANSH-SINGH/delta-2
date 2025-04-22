@@ -31,3 +31,8 @@ h1 {
 .red {
     background: #fdecea;
 }
+img {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+  }
+  
