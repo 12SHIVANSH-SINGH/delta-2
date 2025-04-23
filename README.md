@@ -8,33 +8,6 @@ A smart traffic management system that uses YOLO-based vehicle detection on four
 
 ---
 
-## 📁 Project Structure
-
-```
-traffic-management/
-├── backend/
-│   ├── detection.py
-│   ├── optimizer.py
-│   ├── main.py
-│   ├── requirements.txt
-│   ├── videos/              # 🎥 Camera feed videos
-│   │   ├── north.mp4
-│   │   ├── south.mp4
-│   │   ├── east.mp4
-│   │   └── west.mp4
-│   └── yolo/                # 🤖 YOLO model files
-│       ├── yolov3.weights
-│       ├── yolov3.cfg
-│       └── coco.names
-├── frontend/
-│   ├── index.html
-│   ├── app.js
-│   └── styles.css
-└── README.md
-```
-
----
-
 ## 🧠 Features
 
 - Real-time object detection with YOLOv3.
@@ -51,8 +24,8 @@ traffic-management/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/traffic-management.git
-cd traffic-management
+git clone https://github.com/12SHIVANSH-SINGH/delta-2.git
+cd delta-2
 ```
 
 ### 2. Set up a virtual environment (macOS + VS Code)
@@ -64,16 +37,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Download YOLOv3 weights and config files
+### 3. Download YOLOv8 weights and config files manually from here: https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt
 
-```bash
-cd yolo
-wget https://pjreddie.com/media/files/yolov3.weights
-wget https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg
-wget https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
-```
-
-> Alternatively, download manually and place inside `backend/yolo/`.
 
 ---
 
@@ -96,10 +61,11 @@ Open a **new terminal tab/window**:
 
 ```bash
 cd frontend
-python3 -m http.server 8080
+npm install
+npx next dev
 ```
 
-- Frontend URL: [http://localhost:8080](http://localhost:8080)
+- Frontend URL: [http://localhost:3000](http://localhost:3000)
 
 ---
 
