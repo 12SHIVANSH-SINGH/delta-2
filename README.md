@@ -26,10 +26,13 @@ traffic-management/
 │       ├── yolov3.weights
 │       ├── yolov3.cfg
 │       └── coco.names
-├── frontend/
-│   ├── index.html
-│   ├── app.js
-│   └── styles.css
+├── frontend/                # Next.js frontend
+│   ├── pages/
+│   ├── components/
+│   ├── styles/
+│   ├── public/
+│   ├── package.json
+│   └── next.config.js
 └── README.md
 ```
 
@@ -42,11 +45,11 @@ traffic-management/
 - Emergency vehicle detection.
 - Green-light optimization algorithm.
 - FastAPI-based backend API.
-- Live frontend dashboard with auto-refresh.
+- Live Next.js frontend dashboard with auto-refresh.
 
 ---
 
-## 🔧 Installation
+## 🔧 Installation & Setup
 
 ### 1. Clone the repository
 
@@ -55,25 +58,66 @@ git clone https://github.com/your-username/traffic-management.git
 cd traffic-management
 ```
 
-### 2. Set up a virtual environment (macOS + VS Code)
+### 2. Set up the Backend
+
+#### For Windows:
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Download YOLOv3 weights and config files
+#### For macOS/Linux:
+
+```bash
+cd backend
+
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 3. Download YOLOv3 files
+
+#### Automatic download
 
 ```bash
 cd yolo
+
+# For Windows
+curl -O https://pjreddie.com/media/files/yolov3.weights
+curl -O https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg
+curl -O https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
+
+# For macOS/Linux
 wget https://pjreddie.com/media/files/yolov3.weights
 wget https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg
 wget https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
 ```
 
-> Alternatively, download manually and place inside `backend/yolo/`.
+> Alternatively, download the files manually and place them inside `backend/yolo/` directory.
+
+### 4. Set up the Frontend
+
+```bash
+cd ../frontend
+
+# Install dependencies
+npm install
+```
 
 ---
 
@@ -81,25 +125,37 @@ wget https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
 
 ### 1. Start the FastAPI backend
 
+First terminal window:
+
+#### For Windows:
+
+```bash
+cd backend
+venv\Scripts\activate
+uvicorn main:app --reload
+```
+
+#### For macOS/Linux:
+
 ```bash
 cd backend
 source venv/bin/activate
 uvicorn main:app --reload
 ```
 
-- Backend URL: [http://localhost:8000](http://localhost:8000)
+- Backend API will be available at: [http://localhost:8000](http://localhost:8000)
 - API Feed: [http://localhost:8000/traffic_feed](http://localhost:8000/traffic_feed)
 
-### 2. Start the frontend
+### 2. Start the Next.js frontend
 
-Open a **new terminal tab/window**:
+Second terminal window:
 
 ```bash
 cd frontend
-python3 -m http.server 8080
+npx next dev
 ```
 
-- Frontend URL: [http://localhost:8080](http://localhost:8080)
+- Frontend will be available at: [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -128,9 +184,30 @@ Example output:
 {
   "north": { "vehicles": 12, "emergency": false, "green_time": 10 },
   "south": { "vehicles": 8,  "emergency": true,  "green_time": 20 },
-  ...
+  "east": { "vehicles": 5, "emergency": false, "green_time": 8 },
+  "west": { "vehicles": 15, "emergency": false, "green_time": 15 }
 }
 ```
 
+## 🔄 Development Workflow
 
+1. Make changes to the backend code and the server will automatically reload thanks to the `--reload` flag
+2. Make changes to the Next.js frontend and the pages will automatically update thanks to Next.js hot reloading
+3. Data from the backend streams to the frontend in real-time via SSE
 
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+- **YOLO model files not loading**: Ensure the paths in `detection.py` match your project structure
+- **Video files not found**: Check that your video files are properly named and located in `backend/videos/`
+- **CORS errors**: If you're experiencing CORS issues, check the CORS configuration in `main.py`
+
+---
+
+## 📝 Additional Notes
+
+- The backend requires OpenCV for video processing
+- For performance reasons, YOLOv3 is recommended to run on a system with CUDA-compatible GPU
