@@ -1,0 +1,7 @@
+# compiled bytecode files
+__pycache__/
+
+venv/
+
+# that's too heavy to pushh to a repo, around 237 MB, go get the raw source file from here: https://github.com/patrick013/Object-Detection---Yolov3/blob/master/model/yolov3.weights
+yolov3.weights
