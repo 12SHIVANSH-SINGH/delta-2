@@ -73,7 +73,7 @@ export default function VideoAnalysisPage() {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 p-6 bg-[#f9fafb]">
       <h1 className="text-2xl font-bold">Traffic Video Analysis</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -85,7 +85,7 @@ export default function VideoAnalysisPage() {
           <CardContent>
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-gray-800 ${isDragActive ? 'border-primary-500 bg-primary-500 bg-opacity-10' : 'border-gray-700'
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-gray-200 ${isDragActive ? 'border-primary-500 bg-primary-500 bg-opacity-10' : 'border-gray-700'
                 }`}
             >
               <input {...getInputProps()} />
@@ -186,12 +186,12 @@ export default function VideoAnalysisPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-800 p-4 rounded-lg">
+                  <div className="bg-gray-200 p-4 rounded-lg">
                     <div className="text-sm text-gray-400 mb-1">Vehicle Count</div>
                     <div className="text-2xl font-bold">{analysisResult.count}</div>
                   </div>
 
-                  <div className="bg-gray-800 p-4 rounded-lg">
+                  <div className="bg-gray-200 p-4 rounded-lg">
                     <div className="text-sm text-gray-400 mb-1">Emergency Vehicles</div>
                     <div className="flex items-center">
                       {analysisResult.emergency ? (
@@ -209,7 +209,7 @@ export default function VideoAnalysisPage() {
                   </div>
                 </div>
 
-                <div className="bg-gray-800 p-4 rounded-lg">
+                <div className="bg-gray-200 p-4 rounded-lg">
                   <div className="text-sm text-gray-400 mb-2">Traffic Assessment</div>
                   <div className="text-sm">
                     {analysisResult.count > 30 ? (
@@ -236,7 +236,7 @@ export default function VideoAnalysisPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center p-8 text-gray-400">
-                <div className="bg-gray-800 p-4 rounded-full mb-4">
+                <div className="bg-gray-200 p-4 rounded-full mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
@@ -255,23 +255,23 @@ export default function VideoAnalysisPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 bg-gray-800 rounded-lg">
+            <div className="p-4 bg-gray-200 rounded-lg">
               <div className="text-primary-400 text-xl font-bold mb-2">1. Upload</div>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-black">
                 Upload traffic video footage or images from any camera angle. The system accepts most common formats.
               </p>
             </div>
 
-            <div className="p-4 bg-gray-800 rounded-lg">
+            <div className="p-4 bg-gray-200 rounded-lg">
               <div className="text-primary-400 text-xl font-bold mb-2">2. Analysis</div>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-black">
                 Our AI system uses YOLOv8 to detect and count vehicles, including emergency vehicles like ambulances.
               </p>
             </div>
 
-            <div className="p-4 bg-gray-800 rounded-lg">
+            <div className="p-4 bg-gray-200 rounded-lg">
               <div className="text-primary-400 text-xl font-bold mb-2">3. Results</div>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-black">
                 View detailed analysis with vehicle counts, emergency detection, and traffic flow recommendations.
               </p>
             </div>

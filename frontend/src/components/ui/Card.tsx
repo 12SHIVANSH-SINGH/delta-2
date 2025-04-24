@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { CameraIcon } from '@heroicons/react/24/outline';
 
 interface CardProps {
     className?: string;
@@ -9,7 +10,7 @@ interface CardProps {
 export function Card({ className, children }: CardProps) {
     return (
         <div className={cn(
-            "bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-700 transition-all duration-200 hover:shadow-lg",
+            "bg-white rounded-xl shadow-sm overflow-hidden border border-gray-300 transition-all duration-200 hover:shadow-md",
             className
         )}>
             {children}
@@ -24,7 +25,7 @@ interface CardHeaderProps {
 
 export function CardHeader({ className, children }: CardHeaderProps) {
     return (
-        <div className={cn("px-4 py-3 border-b border-gray-700 flex items-center justify-between", className)}>
+        <div className={cn("px-4 py-3 border-b border-blue-100 flex items-center justify-between", className)}>
             {children}
         </div>
     );
@@ -35,9 +36,11 @@ interface CardTitleProps {
     children: ReactNode;
 }
 
+
 export function CardTitle({ className, children }: CardTitleProps) {
     return (
-        <h3 className={cn("text-lg font-medium text-white", className)}>
+        <h3 className={cn("text-lg text-gray-700 flex items-center gap-2", className)}>
+            <CameraIcon className="h-5 w-5 text-gray-700" />
             {children}
         </h3>
     );
@@ -63,7 +66,7 @@ interface CardFooterProps {
 
 export function CardFooter({ className, children }: CardFooterProps) {
     return (
-        <div className={cn("px-4 py-3 border-t border-gray-700", className)}>
+        <div className={cn("px-4 py-3 border-t border-blue-100", className)}>
             {children}
         </div>
     );

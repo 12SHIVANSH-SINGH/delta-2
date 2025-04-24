@@ -40,17 +40,17 @@ export default function EmergencyAlert({ trafficData }: EmergencyAlertProps) {
 
   return (
     <div className="fixed top-20 right-6 z-50 max-w-sm w-full animate-fade-in">
-      <div className="bg-danger-600 border-l-4 border-danger-800 text-white p-4 rounded-lg shadow-lg">
+      <div className="bg-red-50 border-l-4 border-red-500 text-red-800 p-4 rounded-lg shadow-md">
         <div className="flex items-start">
           <div className="flex-shrink-0">
-            <ExclamationTriangleIcon className="h-6 w-6 text-white animate-pulse" />
+            <ExclamationTriangleIcon className="h-6 w-6 text-red-500 animate-pulse" />
           </div>
           <div className="ml-3 flex-1">
             <p className="text-sm font-medium">
               Emergency vehicle{emergencyLanes.length > 1 ? 's' : ''} detected in{' '}
               {emergencyLanes.join(', ')} lane{emergencyLanes.length > 1 ? 's' : ''}.
             </p>
-            <p className="mt-1 text-xs opacity-80">
+            <p className="mt-1 text-xs text-red-600">
               Signal timing has been optimized to prioritize emergency vehicles.
             </p>
           </div>
@@ -59,7 +59,7 @@ export default function EmergencyAlert({ trafficData }: EmergencyAlertProps) {
               setDismissed(true);
               setShowAlert(false);
             }}
-            className="ml-4 text-white hover:text-gray-100 focus:outline-none"
+            className="ml-4 text-red-500 hover:text-red-700 focus:outline-none"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>

@@ -5,14 +5,14 @@ import { Toaster } from 'react-hot-toast';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
             <Toaster
                 position="top-right"
                 toastOptions={{
                     style: {
-                        background: '#1f2937',
-                        color: '#e5e7eb',
-                        border: '1px solid #374151',
+                        background: '#f0f9ff',
+                        color: '#1e40af',
+                        border: '1px solid #bfdbfe',
                     },
                     success: {
                         icon: '✅',

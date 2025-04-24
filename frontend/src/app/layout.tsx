@@ -21,13 +21,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans bg-gray-900 text-gray-200`}>
+      <body className={`${inter.variable} font-sans bg-white text-black`}>
         <Providers>
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
             <main className="flex-1 overflow-hidden flex flex-col">
               <Header />
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto">
                 {children}
               </div>
             </main>

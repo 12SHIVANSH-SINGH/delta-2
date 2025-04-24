@@ -8,8 +8,9 @@ import TrafficCamera from '@/components/traffic/TrafficCamera';
 import SignalVisualizer from '@/components/traffic/SignalVisualizer';
 import EmergencyAlert from '@/components/traffic/EmergencyAlert';
 import { api } from '@/lib/api';
-import { TrafficResponse, Direction } from '@/types';
+import { TrafficResponse } from '@/types';
 import { determineActiveSignal, formatTimestamp } from '@/lib/utils';
+import VehicleCounts from '@/components/traffic/VehicleCounts';
 
 export default function Dashboard() {
   const [trafficData, setTrafficData] = useState<TrafficResponse | null>(null);
@@ -19,7 +20,6 @@ export default function Dashboard() {
   const [activeSignal, setActiveSignal] = useState<string | null>(null);
 
   useEffect(() => {
-    // Subscribe to real-time traffic data
     const subscription = api.subscribeToTrafficFeed(
       (data) => {
         setTrafficData(data);
@@ -35,14 +35,13 @@ export default function Dashboard() {
       }
     );
 
-    // Cleanup on component unmount
     return () => {
       subscription.close();
     };
   }, []);
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 p-6 bg-[#f9fafb] text-black">
       {/* Emergency alert */}
       <EmergencyAlert trafficData={trafficData} />
 
@@ -51,13 +50,13 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold">Traffic Dashboard</h1>
 
         <div className="flex items-center text-sm space-x-4">
-          <div className={`flex items-center ${connected ? 'text-green-500' : 'text-red-500'}`}>
-            <div className={`h-2 w-2 rounded-full mr-2 ${connected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+          <div className={`flex items-center ${connected ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`h-2 w-2 rounded-full mr-2 ${connected ? 'bg-green-600 animate-pulse' : 'bg-red-600'}`}></div>
             <span>{connected ? 'Connected' : 'Disconnected'}</span>
           </div>
 
           {lastUpdated && (
-            <div className="text-gray-400">
+            <div className="text-gray-500">
               Last updated: {formatTimestamp(lastUpdated)}
             </div>
           )}
@@ -66,13 +65,13 @@ export default function Dashboard() {
 
       {/* Error message */}
       {error && (
-        <div className="bg-danger-600 bg-opacity-20 border border-danger-700 rounded-lg p-3 text-sm text-danger-200 flex items-center">
-          <ExclamationTriangleIcon className="h-5 w-5 mr-2 text-danger-500" />
+        <div className="bg-red-50 border border-red-600 rounded-lg p-3 text-sm text-red-700 flex items-center">
+          <ExclamationTriangleIcon className="h-5 w-5 mr-2 text-red-600" />
           {error}
         </div>
       )}
 
-      {/* Traffic cameras grid */}
+      {/* Traffic cameras */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {trafficData && trafficData.lanes ? (
           Object.entries(trafficData.lanes).map(([direction, data]) => (
@@ -85,106 +84,55 @@ export default function Dashboard() {
             />
           ))
         ) : (
-          // Placeholder loading cards
           Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="opacity-70">
+            <Card key={i} className="opacity-70 shadow-sm bg-gray-200">
               <CardHeader>
                 <CardTitle>
-                  <div className="h-6 bg-gray-700 rounded-md animate-pulse w-24"></div>
+                  <div className="h-6 bg-gray-300 rounded-md animate-pulse w-24"></div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="aspect-video bg-gray-900"></div>
+                <div className="aspect-video bg-gray-300"></div>
               </CardContent>
             </Card>
           ))
         )}
       </div>
 
-      {/* Signal timing visualization */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Signal + Vehicle Count with equal width */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SignalVisualizer
           signalTimes={trafficData?.signal_times || {}}
-          className="lg:col-span-2"
+          className="w-full"
         />
 
-        {/* Traffic info card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Traffic Summary</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {trafficData ? (
+        {trafficData ? (
+          <div className="w-full">
+            <VehicleCounts
+              data={{
+                North: { count: trafficData.lanes.North?.count || 0, change: 0 },
+                South: { count: trafficData.lanes.South?.count || 0, change: -3 },
+                East: { count: trafficData.lanes.East?.count || 0, change: -3 },
+                West: { count: trafficData.lanes.West?.count || 0, change: 0 },
+              }}
+            />
+          </div>
+        ) : (
+          <Card className="bg-white shadow border border-gray-300 w-full">
+            <CardHeader className="border-b border-gray-300">
+              <CardTitle className="text-black">Vehicle Counts</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
-                {/* Total vehicles */}
-                <div>
-                  <div className="text-sm text-gray-400 mb-1">Total Vehicles</div>
-                  <div className="text-2xl font-bold">
-                    {Object.values(trafficData.lanes).reduce(
-                      (sum, lane) => sum + lane.count,
-                      0
-                    )}
-                  </div>
-                </div>
-
-                {/* Per-direction breakdown */}
-                <div>
-                  <div className="text-sm text-gray-400 mb-2">Distribution</div>
-                  <div className="space-y-2">
-                    {Object.entries(trafficData.lanes).map(([direction, data]) => (
-                      <div key={direction} className="flex justify-between items-center">
-                        <div className="text-sm">{direction}</div>
-                        <div className="flex items-center">
-                          <div className="h-2 bg-primary-500 rounded-full mr-2"
-                            style={{
-                              width: `${Math.min(100, data.count * 4)}px`,
-                              backgroundColor: `var(--color-${(Object.keys(trafficData.lanes).indexOf(direction) % 5) + 1})`,
-                            }}>
-                          </div>
-                          <div className="text-sm">{data.count}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Emergency vehicles */}
-                <div>
-                  <div className="text-sm text-gray-400 mb-1">Emergency Vehicles</div>
-                  <div className="flex items-center">
-                    <div className="text-2xl font-bold mr-2">
-                      {Object.values(trafficData.lanes).filter(lane => lane.emergency).length}
-                    </div>
-                    {Object.entries(trafficData.lanes)
-                      .filter(([_, data]) => data.emergency)
-                      .map(([direction]) => (
-                        <span key={direction} className="bg-danger-600 text-white text-xs px-2 py-1 rounded-full mr-1">
-                          {direction}
-                        </span>
-                      ))
-                    }
-                  </div>
-                </div>
-
-                {/* System status */}
-                <div className="border-t border-gray-700 pt-4 mt-4">
-                  <div className="flex items-center text-gray-400 text-xs">
-                    <InformationCircleIcon className="h-4 w-4 mr-1" />
-                    <span>System operating normally</span>
-                  </div>
-                </div>
+                <div className="h-6 bg-gray-300 rounded-md animate-pulse w-24"></div>
+                <div className="h-6 bg-gray-300 rounded-md animate-pulse w-full"></div>
+                <div className="h-6 bg-gray-300 rounded-md animate-pulse w-2/3"></div>
               </div>
-            ) : (
-              // Placeholder loading state
-              <div className="space-y-4">
-                <div className="h-6 bg-gray-700 rounded-md animate-pulse w-24"></div>
-                <div className="h-6 bg-gray-700 rounded-md animate-pulse w-full"></div>
-                <div className="h-6 bg-gray-700 rounded-md animate-pulse w-2/3"></div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
     </div>
   );
 }
