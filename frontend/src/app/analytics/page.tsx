@@ -259,7 +259,7 @@ export default function AnalyticsPage() {
       {/* Traffic statistics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {trafficStats.map((stat) => (
-          <Card key={stat.label} className="hover:bg-gray-800 transition-colors">
+          <Card key={stat.label} className="hover:bg-white transition-colors">
             <CardContent className="p-6">
               <h3 className="text-sm font-medium text-black">{stat.label}</h3>
               <div className="mt-2 flex items-baseline">
