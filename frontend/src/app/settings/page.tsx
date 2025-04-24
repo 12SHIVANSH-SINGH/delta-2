@@ -52,7 +52,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 p-6 bg-[#f9fafb]">
       <h1 className="text-2xl font-bold">Settings</h1>
       
       <form onSubmit={handleSubmit}>
@@ -74,7 +74,7 @@ export default function SettingsPage() {
               <div className="space-y-4">
                 {Object.entries(cameraSources).map(([lane, source]) => (
                   <div key={lane}>
-                    <label htmlFor={`camera-${lane}`} className="text-sm font-medium text-gray-300 block mb-1">
+                    <label htmlFor={`camera-${lane}`} className="text-sm font-medium text-gray-700 block mb-1">
                       {lane} Camera Source
                     </label>
                     <input
@@ -82,7 +82,7 @@ export default function SettingsPage() {
                       id={`camera-${lane}`}
                       value={source}
                       onChange={(e) => handleInputChange(lane, e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-300"
+                      className="w-full px-3 py-2 bg-gray-300 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-black"
                       placeholder="Enter video source path"
                     />
                   </div>
@@ -94,6 +94,7 @@ export default function SettingsPage() {
                     variant="primary"
                     isLoading={isSaving}
                     disabled={isSaving}
+                    className="bg-[rgb(29,78,216)]"
                   >
                     Save Camera Settings
                   </Button>
@@ -111,7 +112,7 @@ export default function SettingsPage() {
         <CardContent>
           <div className="space-y-6">
             <div>
-              <label htmlFor="min-green" className="text-sm font-medium text-gray-300 block mb-1">
+              <label htmlFor="min-green" className="text-sm font-medium text-gray-700 block mb-1">
                 Minimum Green Time (seconds)
               </label>
               <input
@@ -120,12 +121,12 @@ export default function SettingsPage() {
                 min="5"
                 max="30"
                 defaultValue="5"
-                className="w-full max-w-xs px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-300"
+                className="w-full max-w-xs px-3 py-2 bg-gray-300 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-black"
               />
             </div>
             
             <div>
-              <label htmlFor="max-green" className="text-sm font-medium text-gray-300 block mb-1">
+              <label htmlFor="max-green" className="text-sm font-medium text-gray-700 block mb-1">
                 Maximum Green Time (seconds)
               </label>
               <input
@@ -134,18 +135,18 @@ export default function SettingsPage() {
                 min="30"
                 max="120"
                 defaultValue="60"
-                className="w-full max-w-xs px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-300"
+                className="w-full max-w-xs px-3 py-2 bg-gray-300 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-black"
               />
             </div>
             
             <div>
-              <label htmlFor="emergency-priority" className="text-sm font-medium text-gray-300 block mb-1">
+              <label htmlFor="emergency-priority" className="text-sm font-medium text-gray-700 block mb-1">
                 Emergency Vehicle Priority
               </label>
               <select
                 id="emergency-priority"
                 defaultValue="high"
-                className="w-full max-w-xs px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-300"
+                className="w-full max-w-xs px-3 py-2 bg-gray-300 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-black"
               >
                 <option value="low">Low (30% cycle time)</option>
                 <option value="medium">Medium (50% cycle time)</option>
@@ -155,7 +156,7 @@ export default function SettingsPage() {
             </div>
             
             <div>
-              <Button variant="primary">Save Signal Settings</Button>
+              <Button variant="primary" className="bg-[rgb(29,78,216)]">Save Signal Settings</Button>
             </div>
           </div>
         </CardContent>
@@ -168,7 +169,7 @@ export default function SettingsPage() {
         <CardContent>
           <div className="space-y-6">
             <div>
-              <label htmlFor="detection-confidence" className="text-sm font-medium text-gray-300 block mb-1">
+              <label htmlFor="detection-confidence" className="text-sm font-medium text-gray-700 block mb-1">
                 Detection Confidence Threshold
               </label>
               <input
@@ -180,7 +181,7 @@ export default function SettingsPage() {
                 defaultValue="0.4"
                 className="w-full max-w-sm"
               />
-              <div className="flex justify-between max-w-sm text-xs text-gray-400 mt-1">
+              <div className="flex justify-between max-w-sm text-xs text-gray-700 mt-1">
                 <span>Low (0.1)</span>
                 <span>Medium (0.5)</span>
                 <span>High (0.9)</span>
@@ -194,7 +195,7 @@ export default function SettingsPage() {
                 defaultChecked
                 className="h-4 w-4 rounded bg-gray-800 border-gray-700 text-primary-600 focus:ring-primary-500"
               />
-              <label htmlFor="enable-alerts" className="text-sm font-medium text-gray-300">
+              <label htmlFor="enable-alerts" className="text-sm font-medium text-gray-700">
                 Enable Emergency Vehicle Alerts
               </label>
             </div>
@@ -205,13 +206,13 @@ export default function SettingsPage() {
                 id="debug-mode"
                 className="h-4 w-4 rounded bg-gray-800 border-gray-700 text-primary-600 focus:ring-primary-500"
               />
-              <label htmlFor="debug-mode" className="text-sm font-medium text-gray-300">
+              <label htmlFor="debug-mode" className="text-sm font-medium text-gray-700">
                 Enable Debug Mode
               </label>
             </div>
             
             <div>
-              <Button variant="primary">Save System Settings</Button>
+              <Button variant="primary" className="bg-[rgb(29,78,216)]">Save System Settings</Button>
             </div>
           </div>
         </CardContent>

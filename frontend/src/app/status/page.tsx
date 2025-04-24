@@ -45,7 +45,7 @@ export default function StatusPage() {
   }, []);
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 p-6 bg-[#f9fafb]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">System Status</h1>
         
@@ -55,6 +55,7 @@ export default function StatusPage() {
           leftIcon={<ArrowPathIcon className="h-4 w-4" />}
           onClick={fetchData}
           isLoading={isRefreshing}
+          className="bg-[rgb(29,78,216)]"
         >
           Refresh
         </Button>
@@ -94,7 +95,7 @@ export default function StatusPage() {
                         <CheckCircleIcon className="h-6 w-6 text-success-500" />
                       </div>
                       <div>
-                        <div className="font-medium text-white">Operational</div>
+                        <div className="font-medium text-gray-700">Operational</div>
                         <div className="text-sm text-success-400">All systems running</div>
                       </div>
                     </>
@@ -104,7 +105,7 @@ export default function StatusPage() {
                         <XCircleIcon className="h-6 w-6 text-danger-500" />
                       </div>
                       <div>
-                        <div className="font-medium text-white">System Error</div>
+                        <div className="font-medium text-gray-700">System Error</div>
                         <div className="text-sm text-danger-400">Check system logs</div>
                       </div>
                     </>
@@ -113,18 +114,18 @@ export default function StatusPage() {
                 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-sm">Uptime</span>
-                    <span className="text-white">{formatDuration(healthData?.uptime || 0)}</span>
+                    <span className="text-black text-sm">Uptime</span>
+                    <span className="text-gray-700">{formatDuration(healthData?.uptime || 0)}</span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-sm">Active clients</span>
-                    <span className="text-white">{healthData?.active_clients || 0}</span>
+                    <span className="text-black text-sm">Active clients</span>
+                    <span className="text-gray-700">{healthData?.active_clients || 0}</span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-sm">Last checked</span>
-                    <span className="text-white">{new Date().toLocaleTimeString()}</span>
+                    <span className="text-black text-sm">Last checked</span>
+                    <span className="text-gray-700">{new Date().toLocaleTimeString()}</span>
                   </div>
                 </div>
               </CardContent>
@@ -143,7 +144,7 @@ export default function StatusPage() {
                         <CheckCircleIcon className="h-6 w-6 text-success-500" />
                       </div>
                       <div>
-                        <div className="font-medium text-white">Online</div>
+                        <div className="font-medium text-gray-700">Online</div>
                         <div className="text-sm text-success-400">YOLOv8 detector operational</div>
                       </div>
                     </>
@@ -153,7 +154,7 @@ export default function StatusPage() {
                         <XCircleIcon className="h-6 w-6 text-danger-500" />
                       </div>
                       <div>
-                        <div className="font-medium text-white">Detector Error</div>
+                        <div className="font-medium text-gray-700">Detector Error</div>
                         <div className="text-sm text-danger-400">{healthData?.detector || 'Unknown error'}</div>
                       </div>
                     </>
@@ -162,17 +163,17 @@ export default function StatusPage() {
                 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-sm">Model</span>
-                    <span className="text-white">YOLOv8n</span>
+                    <span className="text-black text-sm">Model</span>
+                    <span className="text-gray-700">YOLOv8n</span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-sm">Confidence threshold</span>
-                    <span className="text-white">0.4</span>
+                    <span className="text-black text-sm">Confidence threshold</span>
+                    <span className="text-gray-700">0.4</span>
                   </div>
                   
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-sm">Status</span>
+                    <span className="text-black text-sm">Status</span>
                     <span className={healthData?.detector === 'ok' ? 'text-success-400' : 'text-danger-400'}>
                       {healthData?.detector === 'ok' ? 'Operational' : 'Error'}
                     </span>
@@ -189,21 +190,21 @@ export default function StatusPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-gray-400 mb-1">Cache Age</div>
+                    <div className="text-sm text-black mb-1">Cache Age</div>
                     <div className="text-2xl font-bold">
                       {metricsData ? `${Math.round(metricsData.cache_age_seconds * 100) / 100}s` : 'N/A'}
                     </div>
                   </div>
                   
                   <div>
-                    <div className="text-sm text-gray-400 mb-1">Active Connections</div>
+                    <div className="text-sm text-black mb-1">Active Connections</div>
                     <div className="text-2xl font-bold">
                       {metricsData?.active_connections || 0}
                     </div>
                   </div>
                   
                   <div>
-                    <div className="text-sm text-gray-400 mb-1">Last Updated</div>
+                    <div className="text-sm text-black mb-1">Last Updated</div>
                     <div className="text-sm">
                       {metricsData?.timestamp ? new Date(metricsData.timestamp).toLocaleTimeString() : 'N/A'}
                     </div>
@@ -223,13 +224,13 @@ export default function StatusPage() {
                 <table className="min-w-full divide-y divide-gray-700">
                   <thead>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                         Direction
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                         Source
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                         Status
                       </th>
                     </tr>
@@ -237,13 +238,13 @@ export default function StatusPage() {
                   <tbody className="divide-y divide-gray-700">
                     {healthData && Object.entries(healthData.sources).map(([lane, status]) => (
                       <tr key={lane}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {lane}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {healthData.sources[lane].includes('file not found')
                             ? <span className="text-danger-400">File not found</span>
-                            : <span className="text-gray-300">videos/{lane.toLowerCase()}.mp4</span>
+                            : <span className="text-gray-700">videos/{lane.toLowerCase()}.mp4</span>
                           }
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -271,16 +272,16 @@ export default function StatusPage() {
               <CardTitle>System Log</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-900 p-4 rounded-md font-mono text-xs text-gray-300 h-48 overflow-y-auto">
+              <div className="bg-gray-900 p-4 rounded-md font-mono text-xs text-gray-700 h-48 overflow-y-auto">
                 <div className="text-success-400">[INFO] System started successfully</div>
-                <div className="text-gray-400">[INFO] YOLOv8 detector initialized</div>
-                <div className="text-gray-400">[INFO] Connected to video sources</div>
+                <div className="text-black">[INFO] YOLOv8 detector initialized</div>
+                <div className="text-black">[INFO] Connected to video sources</div>
                 <div className="text-warning-400">[WARN] North camera feed has low framerate</div>
-                <div className="text-gray-400">[INFO] Traffic optimizer calibrated</div>
+                <div className="text-black">[INFO] Traffic optimizer calibrated</div>
                 <div className="text-danger-400">[ERROR] Failed to process frame from East camera at 14:32:17</div>
-                <div className="text-gray-400">[INFO] Emergency vehicle detected in South lane</div>
-                <div className="text-gray-400">[INFO] Signal timing adjusted for emergency vehicle</div>
-                <div className="text-gray-400">[INFO] Cache refreshed</div>
+                <div className="text-black">[INFO] Emergency vehicle detected in South lane</div>
+                <div className="text-black">[INFO] Signal timing adjusted for emergency vehicle</div>
+                <div className="text-black">[INFO] Cache refreshed</div>
                 <div className="text-success-400">[INFO] System health check passed</div>
               </div>
             </CardContent>
