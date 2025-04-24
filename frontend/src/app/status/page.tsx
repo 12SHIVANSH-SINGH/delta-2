@@ -273,16 +273,16 @@ export default function StatusPage() {
             </CardHeader>
             <CardContent>
               <div className="bg-gray-900 p-4 rounded-md font-mono text-xs text-gray-700 h-48 overflow-y-auto">
-                <div className="text-success-400">[INFO] System started successfully</div>
-                <div className="text-black">[INFO] YOLOv8 detector initialized</div>
-                <div className="text-black">[INFO] Connected to video sources</div>
-                <div className="text-warning-400">[WARN] North camera feed has low framerate</div>
-                <div className="text-black">[INFO] Traffic optimizer calibrated</div>
-                <div className="text-danger-400">[ERROR] Failed to process frame from East camera at 14:32:17</div>
-                <div className="text-black">[INFO] Emergency vehicle detected in South lane</div>
-                <div className="text-black">[INFO] Signal timing adjusted for emergency vehicle</div>
-                <div className="text-black">[INFO] Cache refreshed</div>
-                <div className="text-success-400">[INFO] System health check passed</div>
+                <div className="text-white">[INFO] System started successfully</div>
+                <div className="text-white">[INFO] YOLOv8 detector initialized</div>
+                <div className="text-white">[INFO] Connected to video sources</div>
+                <div className="text-white">[WARN] North camera feed has low framerate</div>
+                <div className="text-white">[INFO] Traffic optimizer calibrated</div>
+                <div className="text-white">[ERROR] Failed to process frame from East camera at 14:32:17</div>
+                <div className="text-white">[INFO] Emergency vehicle detected in South lane</div>
+                <div className="text-white">[INFO] Signal timing adjusted for emergency vehicle</div>
+                <div className="text-white">[INFO] Cache refreshed</div>
+                <div className="text-white">[INFO] System health check passed</div>
               </div>
             </CardContent>
           </Card>
