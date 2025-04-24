@@ -27,16 +27,17 @@ export default function Header() {
     if (!mounted) return null;
 
     return (
-        <header className="bg-gray-900 border-b border-gray-800 h-16 flex items-center justify-between px-6">
+<header className="bg-white dark:bg-black-900 shadow-md h-16 flex items-center justify-between px-6 border-b border-gray-300">
+
             <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-white">Traffic Management System</h1>
+                <h1 className="text-xl font-semibold text-black">Traffic Management System</h1>
             </div>
 
             <div className="flex items-center space-x-4">
                 {/* Theme toggle */}
                 <button
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    className="p-2 rounded-full text-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700"
+                    className="p-2 rounded-full text-white-300 hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-white-700"
                     aria-label="Toggle theme"
                 >
                     {theme === 'light' ? (
@@ -50,7 +51,7 @@ export default function Header() {
                 <div className="relative">
                     <button
                         onClick={() => setShowNotifications(!showNotifications)}
-                        className="p-2 rounded-full text-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700"
+                        className="p-2 rounded-full text-white-300 hover:bg-grey-700 focus:outline-none focus:ring-2 focus:ring-white-700"
                         aria-label="Notifications"
                     >
                         <BellIcon className="h-5 w-5" />
@@ -60,14 +61,14 @@ export default function Header() {
                     </button>
 
                     {showNotifications && (
-                        <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg py-2 z-10 text-sm text-gray-200 border border-gray-700">
+                        <div className="absolute right-0 mt-2 w-80 bg-white-800 rounded-lg shadow-lg py-2 z-10 text-sm text-white-200 border border-white-700">
                             {hasNotifications ? (
-                                <div className="px-4 py-2 hover:bg-gray-700">
+                                <div className="px-4 py-2 hover:bg-white-700">
                                     <div className="font-medium">Emergency vehicle detected</div>
-                                    <div className="text-gray-400 text-xs">North lane - 2 minutes ago</div>
+                                    <div className="text-white-400 text-xs">North lane - 2 minutes ago</div>
                                 </div>
                             ) : (
-                                <div className="px-4 py-2 text-gray-400">No new notifications</div>
+                                <div className="px-4 py-2 text-white-400">No new notifications</div>
                             )}
                         </div>
                     )}
@@ -78,7 +79,7 @@ export default function Header() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white">
                         A
                     </div>
-                    <span className="text-sm font-medium text-gray-300 hidden md:block">Admin</span>
+                    <span className="text-sm font-medium text-white-300 hidden md:block">Admin</span>
                 </div>
             </div>
         </header>

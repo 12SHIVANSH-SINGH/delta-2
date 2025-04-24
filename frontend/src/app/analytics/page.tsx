@@ -131,13 +131,13 @@ export default function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: 'rgb(229, 231, 235)',
+          color: 'rgb(55, 65, 81)', // Changed to gray-700
         }
       },
       title: {
         display: true,
         text: '24-Hour Traffic Trends',
-        color: 'rgb(229, 231, 235)',
+        color: 'rgb(55, 65, 81)', // Changed to gray-700
       },
     },
     scales: {
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
           color: 'rgba(75, 85, 99, 0.2)',
         },
         ticks: {
-          color: 'rgb(156, 163, 175)',
+          color: 'rgb(55, 65, 81)', // Changed to gray-700
         }
       },
       x: {
@@ -155,25 +155,25 @@ export default function AnalyticsPage() {
           color: 'rgba(75, 85, 99, 0.2)',
         },
         ticks: {
-          color: 'rgb(156, 163, 175)',
+          color: 'rgb(55, 65, 81)', // Changed to gray-700
         }
       }
     },
   };
-
+  
   const barOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top',
         labels: {
-          color: 'rgb(229, 231, 235)',
+          color: 'rgb(55, 65, 81)', // Changed to gray-700
         }
       },
       title: {
         display: true,
         text: 'Weekly Emergency Vehicle Detections',
-        color: 'rgb(229, 231, 235)',
+        color: 'rgb(55, 65, 81)', // Changed to gray-700
       },
     },
     scales: {
@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
           color: 'rgba(75, 85, 99, 0.2)',
         },
         ticks: {
-          color: 'rgb(156, 163, 175)',
+          color: 'rgb(55, 65, 81)', // Changed to gray-700
         }
       },
       x: {
@@ -191,12 +191,11 @@ export default function AnalyticsPage() {
           color: 'rgba(75, 85, 99, 0.2)',
         },
         ticks: {
-          color: 'rgb(156, 163, 175)',
+          color: 'rgb(55, 65, 81)', // Changed to gray-700
         }
       }
     },
   };
-
   // Calculate current traffic statistics
   const calculateTrafficStats = () => {
     if (!trafficData) return [];
@@ -248,7 +247,7 @@ export default function AnalyticsPage() {
   const trafficStats = calculateTrafficStats();
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 p-6 bg-[#f9fafb]">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Traffic Analytics</h1>
         <div className={`flex items-center ${connected ? 'text-green-500' : 'text-red-500'}`}>
@@ -262,9 +261,9 @@ export default function AnalyticsPage() {
         {trafficStats.map((stat) => (
           <Card key={stat.label} className="hover:bg-gray-800 transition-colors">
             <CardContent className="p-6">
-              <h3 className="text-sm font-medium text-gray-400">{stat.label}</h3>
+              <h3 className="text-sm font-medium text-black">{stat.label}</h3>
               <div className="mt-2 flex items-baseline">
-                <p className="text-2xl font-semibold text-white">{stat.value}</p>
+                <p className="text-2xl font-semibold text-gray-700">{stat.value}</p>
                 {stat.change && (
                   <p className={`ml-2 text-sm ${stat.up ? 'text-green-400' : 'text-red-400'}`}>
                     {stat.change}
@@ -319,10 +318,10 @@ export default function AnalyticsPage() {
             {Object.entries(distribution).map(([direction, percentage]) => (
               <div key={direction}>
                 <div className="flex justify-between mb-1">
-                  <div className="text-sm font-medium text-gray-300">{direction}</div>
-                  <div className="text-sm font-medium text-gray-300">{percentage}%</div>
+                  <div className="text-sm font-medium text-black">{direction}</div>
+                  <div className="text-sm font-medium text-black">{percentage}%</div>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                <div className="w-full bg-gray-300 rounded-full h-2.5">
                   <div
                     className={`h-2.5 rounded-full ${direction === 'North' ? 'bg-blue-500' :
                         direction === 'South' ? 'bg-green-500' :
@@ -348,22 +347,22 @@ export default function AnalyticsPage() {
             <table className="min-w-full divide-y divide-gray-700">
               <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     Time Period
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     North
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     South
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     East
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     West
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     Cycle Length
                   </th>
                 </tr>
@@ -371,58 +370,58 @@ export default function AnalyticsPage() {
               <tbody className="divide-y divide-gray-700">
                 {trafficData && (
                   <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                       Current
                     </td>
                     {Object.entries(trafficData.signal_times).map(([direction, time]) => (
-                      <td key={direction} className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      <td key={direction} className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {time}s
                       </td>
                     ))}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {Object.values(trafficData.signal_times).reduce((a, b) => a + b, 0)}s
                     </td>
                   </tr>
                 )}
                 <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     Morning (6-9 AM)
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">42s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">38s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">28s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">32s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">140s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">42s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">38s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">28s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">32s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">140s</td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     Midday (9 AM-4 PM)
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">32s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">35s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">32s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">31s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">130s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">32s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">35s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">32s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">31s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">130s</td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     Evening (4-7 PM)
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">36s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">45s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">30s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">34s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">145s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">36s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">45s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">30s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">34s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">145s</td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     Night (7 PM-6 AM)
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">25s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">25s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">25s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">25s</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">100s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">25s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">25s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">25s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">25s</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">100s</td>
                 </tr>
               </tbody>
             </table>
