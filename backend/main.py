@@ -6,6 +6,8 @@ import logging
 from typing import Dict, Optional, List
 from datetime import datetime
 import traceback
+import tempfile
+import uuid
 
 import cv2
 import numpy as np
@@ -28,6 +30,7 @@ logger = logging.getLogger("main")
 
 # Create directory for app data if needed
 os.makedirs("app_data", exist_ok=True)
+os.makedirs("uploaded_media", exist_ok=True)  # Directory to store uploaded videos temporarily
 
 # Initialize FastAPI app with metadata
 app = FastAPI(
@@ -46,6 +49,13 @@ class TrafficResponse(BaseModel):
     lanes: Dict[str, TrafficData]
     signal_times: Dict[str, int]
     timestamp: str
+
+class MediaAnalysisResponse(BaseModel):
+    count: int
+    emergency: bool
+    image: str
+    media_type: str
+    video_url: Optional[str] = None
 
 # 🛡️ CORS configuration
 app.add_middleware(
@@ -99,7 +109,6 @@ async def traffic_poll_task():
         traceback.print_exc()
 
 
-
 @app.on_event("startup")
 async def startup_event():
     """Initialize app state and start background tasks."""
@@ -117,7 +126,6 @@ async def startup_event():
     logger.info("Traffic Management System API started")
 
 
-
 @app.on_event("shutdown")
 async def shutdown_event():
     """Clean up resources on shutdown."""
@@ -130,7 +138,6 @@ async def shutdown_event():
         except asyncio.CancelledError:
             pass
     logger.info("Resources cleaned up")
-
 
 
 @app.get("/traffic_feed")
@@ -175,38 +182,181 @@ async def traffic_feed():
     )
 
 
+def determine_file_type(filename: str) -> str:
+    """Determine if a file is an image or video based on its extension."""
+    video_extensions = {'.mp4', '.avi', '.mov', '.wmv', '.mkv'}
+    _, ext = os.path.splitext(filename.lower())
+    
+    if ext in video_extensions:
+        return "video"
+    else:
+        return "image"
 
-@app.post("/upload_image")
-async def upload_image(file: UploadFile = File(...)):
+
+def process_video(video_path: str, sample_interval: int = 30):
     """
-    Analyze a traffic image uploaded by the user.
-    Returns vehicle count, emergency vehicle presence, and annotated image.
+    Process a video file to extract traffic data.
+    
+    Args:
+        video_path: Path to the video file
+        sample_interval: Process every Nth frame
+    
+    Returns:
+        tuple: (max_count, emergency_detected, representative_frame_b64, video_url)
     """
     try:
-        # Read image file
-        contents = await file.read()
-        if not contents:
-            raise HTTPException(status_code=400, detail="Empty file")
-            
-        # Convert to OpenCV format
-        npimg = np.frombuffer(contents, np.uint8)
-        frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            raise Exception(f"Cannot open video file: {video_path}")
         
-        if frame is None:
-            raise HTTPException(status_code=400, detail="Invalid image format")
-            
-        # Process the image
-        count, emergency, image = detector.detect_objects(frame)
+        # Get video properties
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        duration = frame_count / fps
         
-        return JSONResponse({
-            "count": count,
-            "emergency": emergency,
-            "image": image
-        })
+        # For very short videos, sample more frames
+        if duration < 10:
+            sample_interval = max(5, sample_interval // 3)
+        
+        # Initialize tracking variables
+        max_count = 0
+        emergency_detected = False
+        best_frame = None
+        best_frame_b64 = ""
+        frame_index = 0
+        
+        # Process frames at intervals
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+                
+            # Process every Nth frame
+            if frame_index % sample_interval == 0:
+                # Run detection on this frame
+                count, emergency, image_b64 = detector.detect_objects(frame)
+                
+                # Track maximum vehicle count and emergency vehicles
+                if count > max_count:
+                    max_count = count
+                    best_frame = frame.copy()
+                    best_frame_b64 = image_b64
+                
+                if emergency:
+                    emergency_detected = True
+            
+            frame_index += 1
+        
+        # Clean up
+        cap.release()
+        
+        # If we didn't find any frames with vehicles, use the first analyzed frame
+        if best_frame_b64 == "":
+            # Use first frame as fallback
+            cap = cv2.VideoCapture(video_path)
+            ret, frame = cap.read()
+            if ret:
+                count, emergency, best_frame_b64 = detector.detect_objects(frame)
+            cap.release()
+        
+        # For web access, the path needs to be relative to the API endpoint
+        # For now we'll return the raw path, but this should be converted to a URL
+        video_url = f"/media/{os.path.basename(video_path)}"
+        
+        return max_count, emergency_detected, best_frame_b64, video_url
+        
     except Exception as e:
-        logger.error(f"Error processing uploaded image: {e}")
+        logger.error(f"Error processing video: {e}")
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Image processing error: {str(e)}")
+        return 0, False, "", None
+
+
+@app.post("/upload_media")
+async def upload_media(file: UploadFile = File(...)):
+    """
+    Analyze a traffic image or video uploaded by the user.
+    Returns vehicle count, emergency vehicle presence, and annotated media.
+    """
+    try:
+        # Check if file exists and has content
+        if not file or not file.filename:
+            raise HTTPException(status_code=400, detail="No file uploaded")
+            
+        # Determine media type
+        media_type = determine_file_type(file.filename)
+        
+        if media_type == "image":
+            # Process image (existing logic)
+            contents = await file.read()
+            if not contents:
+                raise HTTPException(status_code=400, detail="Empty file")
+                
+            # Convert to OpenCV format
+            npimg = np.frombuffer(contents, np.uint8)
+            frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+            
+            if frame is None:
+                raise HTTPException(status_code=400, detail="Invalid image format")
+                
+            # Process the image
+            count, emergency, image = detector.detect_objects(frame)
+            
+            # Return response with image data
+            return MediaAnalysisResponse(
+                count=count,
+                emergency=emergency,
+                image=image,
+                media_type="image"
+            )
+        
+        elif media_type == "video":
+            # Process video (new logic)
+            # Save the file to disk temporarily
+            file_id = str(uuid.uuid4())
+            temp_dir = "uploaded_media"
+            os.makedirs(temp_dir, exist_ok=True)
+            
+            file_extension = os.path.splitext(file.filename)[1]
+            temp_file_path = os.path.join(temp_dir, f"{file_id}{file_extension}")
+            
+            # Write uploaded file to disk
+            with open(temp_file_path, "wb") as buffer:
+                contents = await file.read()  
+                buffer.write(contents)
+            
+            logger.info(f"Saved uploaded video to {temp_file_path}")
+            
+            # Process the video file
+            count, emergency, image, video_url = process_video(temp_file_path)
+            
+            # Return response with video analysis results
+            return MediaAnalysisResponse(
+                count=count,
+                emergency=emergency,
+                image=image,  # Representative frame with detection
+                media_type="video",
+                video_url=video_url  # URL to access the processed video
+            )
+        
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported media type")
+            
+    except Exception as e:
+        logger.error(f"Error processing uploaded media: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Media processing error: {str(e)}")
+
+
+# For backward compatibility - redirect to new endpoint
+@app.post("/upload_image")
+async def upload_image(file: UploadFile = File(...)):
+    """Legacy endpoint for backward compatibility - redirects to upload_media"""
+    return await upload_media(file)
+
+
+# Serve uploaded media files
+app.mount("/media", StaticFiles(directory="uploaded_media"), name="uploaded_media")
+
 
 @app.get("/camera_sources")
 async def get_camera_sources():
@@ -214,6 +364,7 @@ async def get_camera_sources():
     Get the current camera sources configuration.
     """
     return JSONResponse(camera_sources)
+
 
 @app.post("/camera_sources")
 async def update_camera_sources(sources: Dict[str, str]):
@@ -246,7 +397,6 @@ async def update_camera_sources(sources: Dict[str, str]):
             "message": f"Failed to update camera sources: {str(e)}",
             "updated": False
         }, status_code=500)
-
 
 
 @app.get("/health")
@@ -289,6 +439,7 @@ async def health_check():
         "timestamp": datetime.now().isoformat()
     }
 
+
 @app.get("/metrics")
 async def get_metrics():
     """
@@ -300,6 +451,7 @@ async def get_metrics():
         "cache_age_seconds": time.time() - app.state.traffic_cache.get("cached_at", time.time()),
         "timestamp": datetime.now().isoformat()
     }
+
 
 # ────────────────────────────────────────────────────────────
 # Serve your new frontend as static *after* all API routes

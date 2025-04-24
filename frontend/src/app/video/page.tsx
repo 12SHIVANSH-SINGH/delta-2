@@ -10,13 +10,20 @@ import { ExclamationTriangleIcon, ArrowUpTrayIcon, CheckCircleIcon } from '@hero
 import toast from 'react-hot-toast';
 import { base64ToImageUrl } from '@/lib/utils';
 
+type MediaType = 'image' | 'video';
+
+interface AnalysisResult {
+  mediaType: MediaType;
+  mediaUrl: string;
+  count: number;
+  emergency: boolean;
+  videoUrl?: string; // Optional video URL that might be returned from backend
+}
+
 export default function VideoAnalysisPage() {
-  const [isUploading, setIsUploading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<{
-    image: string;
-    count: number;
-    emergency: boolean;
-  } | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [fileType, setFileType] = useState<MediaType | null>(null);
 
   const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
     accept: {
@@ -26,7 +33,11 @@ export default function VideoAnalysisPage() {
     maxFiles: 1,
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
-        handleFileUpload(acceptedFiles[0]);
+        const file = acceptedFiles[0];
+        // Determine if the file is an image or video
+        const type: MediaType = file.type.startsWith('image/') ? 'image' : 'video';
+        setFileType(type);
+        handleFileUpload(file);
       }
     }
   });
@@ -34,22 +45,28 @@ export default function VideoAnalysisPage() {
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setAnalysisResult(null);
-    
+
     try {
       const toastId = toast.loading('Analyzing traffic data...');
-      
+
+      const mediaType: MediaType = file.type.startsWith('image/') ? 'image' : 'video';
+
+      // Use the existing uploadImage API method for both image and video
+      // Backend will need to handle the file type appropriately
       const result = await api.uploadImage(file);
-      
+
       setAnalysisResult({
-        image: result.image,
+        mediaType,
+        mediaUrl: base64ToImageUrl(result.image), // For both image and video (thumbnail for video)
         count: result.count,
-        emergency: result.emergency
+        emergency: result.emergency,
+        videoUrl: result.videoUrl // This may be undefined if backend doesn't support it yet
       });
-      
+
       toast.success('Analysis complete!', { id: toastId });
     } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Failed to analyze image. Please try again.');
+      console.error('Error uploading media:', error);
+      toast.error('Failed to analyze media. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -58,7 +75,7 @@ export default function VideoAnalysisPage() {
   return (
     <div className="space-y-6 pb-8">
       <h1 className="text-2xl font-bold">Traffic Video Analysis</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upload area */}
         <Card>
@@ -68,36 +85,38 @@ export default function VideoAnalysisPage() {
           <CardContent>
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-gray-800 ${
-                isDragActive ? 'border-primary-500 bg-primary-500 bg-opacity-10' : 'border-gray-700'
-              }`}
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-gray-800 ${isDragActive ? 'border-primary-500 bg-primary-500 bg-opacity-10' : 'border-gray-700'
+                }`}
             >
               <input {...getInputProps()} />
               <ArrowUpTrayIcon className="h-12 w-12 mx-auto text-gray-400" />
-              
+
               <p className="mt-2 text-sm text-gray-300">
                 {isDragActive
                   ? "Drop the file here..."
                   : "Drag and drop an image or video, or click to select"}
               </p>
-              
+
               <p className="mt-1 text-xs text-gray-500">
                 Supported formats: JPG, PNG, MP4, MOV, AVI
               </p>
-              
+
               {acceptedFiles.length > 0 && (
                 <div className="mt-4 text-sm text-gray-300">
                   Selected: <span className="font-medium">{acceptedFiles[0].name}</span>
+                  <span className="ml-2 px-2 py-1 bg-gray-700 text-xs rounded-full">
+                    {acceptedFiles[0].type.startsWith('image/') ? 'Image' : 'Video'}
+                  </span>
                 </div>
               )}
-              
+
               <Button
                 className="mt-4"
                 variant="primary"
                 size="sm"
                 isLoading={isUploading}
                 disabled={acceptedFiles.length === 0 || isUploading}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   if (acceptedFiles.length > 0) {
                     handleFileUpload(acceptedFiles[0]);
@@ -107,7 +126,7 @@ export default function VideoAnalysisPage() {
                 {isUploading ? 'Analyzing...' : 'Analyze Traffic'}
               </Button>
             </div>
-            
+
             <div className="mt-4 text-sm text-gray-400">
               <p>
                 Upload traffic images or video clips to analyze vehicle counts and detect emergency vehicles.
@@ -116,7 +135,7 @@ export default function VideoAnalysisPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Results area */}
         <Card>
           <CardHeader>
@@ -131,20 +150,47 @@ export default function VideoAnalysisPage() {
             ) : analysisResult ? (
               <div className="space-y-4">
                 <div className="aspect-video bg-gray-900 relative rounded-lg overflow-hidden">
-                  <Image
-                    src={base64ToImageUrl(analysisResult.image)}
-                    alt="Analysis result"
-                    className="object-cover"
-                    fill={true}
-                  />
+                  {analysisResult.mediaType === 'image' ? (
+                    <Image
+                      src={analysisResult.mediaUrl}
+                      alt="Analysis result"
+                      className="object-cover"
+                      fill={true}
+                    />
+                  ) : (
+                    // If backend returns a video URL, use video element
+                    // Otherwise fall back to showing the thumbnail image
+                    analysisResult.videoUrl ? (
+                      <video
+                        src={analysisResult.videoUrl}
+                        className="w-full h-full object-cover"
+                        controls
+                        autoPlay
+                        loop
+                        muted
+                      />
+                    ) : (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={analysisResult.mediaUrl}
+                          alt="Video analysis result thumbnail"
+                          className="object-cover"
+                          fill={true}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                          <p className="text-white">Video analyzed successfully</p>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gray-800 p-4 rounded-lg">
                     <div className="text-sm text-gray-400 mb-1">Vehicle Count</div>
                     <div className="text-2xl font-bold">{analysisResult.count}</div>
                   </div>
-                  
+
                   <div className="bg-gray-800 p-4 rounded-lg">
                     <div className="text-sm text-gray-400 mb-1">Emergency Vehicles</div>
                     <div className="flex items-center">
@@ -162,7 +208,7 @@ export default function VideoAnalysisPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-800 p-4 rounded-lg">
                   <div className="text-sm text-gray-400 mb-2">Traffic Assessment</div>
                   <div className="text-sm">
@@ -179,7 +225,7 @@ export default function VideoAnalysisPage() {
                         Light traffic detected. Consider shortening green light duration.
                       </div>
                     )}
-                    
+
                     {analysisResult.emergency && (
                       <div className="mt-2 text-danger-400">
                         Emergency vehicle detected! Priority routing recommended.
@@ -201,7 +247,7 @@ export default function VideoAnalysisPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Instructions */}
       <Card>
         <CardHeader>
@@ -215,14 +261,14 @@ export default function VideoAnalysisPage() {
                 Upload traffic video footage or images from any camera angle. The system accepts most common formats.
               </p>
             </div>
-            
+
             <div className="p-4 bg-gray-800 rounded-lg">
               <div className="text-primary-400 text-xl font-bold mb-2">2. Analysis</div>
               <p className="text-sm text-gray-300">
                 Our AI system uses YOLOv8 to detect and count vehicles, including emergency vehicles like ambulances.
               </p>
             </div>
-            
+
             <div className="p-4 bg-gray-800 rounded-lg">
               <div className="text-primary-400 text-xl font-bold mb-2">3. Results</div>
               <p className="text-sm text-gray-300">
